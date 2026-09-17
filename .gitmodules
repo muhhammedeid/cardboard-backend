@@ -1,0 +1,14 @@
+[submodule "apps/frappe"]
+	path = apps/frappe
+	url = https://github.com/frappe/frappe.git
+	branch = version-15
+
+[submodule "apps/erpnext"]
+	path = apps/erpnext
+	url = https://github.com/frappe/erpnext.git
+	branch = version-15
+
+[submodule "apps/cardboard_management"]
+	path = apps/cardboard_management
+	url = https://github.com/muhhammedeid/cardboard-management.git
+	branch = MVP

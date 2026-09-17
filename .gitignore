@@ -1,0 +1,30 @@
+# Bench runtime and machine-local state
+.env
+.env.*
+env/
+logs/
+archived/
+.git-source-history/
+config/pids/
+config/*.pid
+config/*.acl
+config/scheduler_process
+sites/*/
+sites/common_site_config.json
+sites/assets/
+
+# Keep only the app manifest files in sites/
+!sites/apps.json
+!sites/apps.txt
+
+# Local databases, caches, and generated files
+*.sqlite
+*.sqlite3
+*.log
+*.rdb
+__pycache__/
+*.py[cod]
+node_modules/
+.cache/
+.DS_Store
+Thumbs.db
