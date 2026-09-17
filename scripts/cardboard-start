@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Start the Cardboard backend and the optional Nova frontend together.
+set -Eeuo pipefail
+
+BACKEND_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+FRONTEND_DIR="${CARDBOARD_FRONTEND_DIR:-$HOME/cardboard-frontend-nova}"
+FRONTEND_PORT="${CARDBOARD_FRONTEND_PORT:-5173}"
+BACKEND_URL="http://cardboard.localhost:8000"
+FRONTEND_URL="http://cardboard.localhost:${FRONTEND_PORT}"
+
+if ! command -v bench >/dev/null 2>&1; then
+  echo "bench is not installed or is not on PATH." >&2
+  exit 1
+fi
+
+if [[ ! -d "$FRONTEND_DIR" ]]; then
+  echo "Frontend not found at: $FRONTEND_DIR" >&2
+  echo "Set CARDBOARD_FRONTEND_DIR or clone cardboard-frontend-nova there." >&2
+  exit 1
+fi
+
+if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.nvm/nvm.sh"
+fi
+
+if ! ss -ltn 2>/dev/null | grep -q ":${FRONTEND_PORT} "; then
+  (
+    cd "$FRONTEND_DIR"
+    nohup npm run dev >"${TMPDIR:-/tmp}/cardboard-nova.log" 2>&1 </dev/null &
+  )
+  for _ in $(seq 1 45); do
+    sleep 1
+    ss -ltn 2>/dev/null | grep -q ":${FRONTEND_PORT} " && break
+  done
+fi
+
+echo "Backend  -> $BACKEND_URL"
+echo "Frontend -> $FRONTEND_URL"
+echo "Open    -> $FRONTEND_URL"
+echo "Press Ctrl+C to stop the backend."
+
+cd "$BACKEND_DIR"
+exec bench start
